@@ -12,8 +12,8 @@ filename = "uva_map"
 goal = 10  # i have no idea
 init = 20  # no idea
 
-if(len(sys.argv)>=2):
-    if(int(sys.argv[1])==1):
+if (len(sys.argv) >= 2):
+    if (int(sys.argv[1]) == 1):
         # filename = "islip"
         # goal = 46 # Middle Street (right) ... islip
         # init = 124 # Kidlington Road (top left) ... islip
@@ -24,7 +24,7 @@ if(len(sys.argv)>=2):
     #     filename = "charlton"
     #     goal = 33 # road right top ... charlton
     #     init = 43 # road left bottom ... charlton
-    elif(int(sys.argv[1] == 2)):
+    elif (int(sys.argv[1] == 2)):
         filename = "uva_map"
         goal = 30
         init = 50
@@ -56,12 +56,12 @@ for e in G.edges(data=True):
     if "name" in e[2]["data"].tags:
         name = e[2]["data"].tags["name"]
     oneway = False
-    if "oneway" in e[2]["data"].tags and e[2]["data"].tags["oneway"]=="yes":
+    if "oneway" in e[2]["data"].tags and e[2]["data"].tags["oneway"] == "yes":
         oneway = True
     lanes = 1
     if "lanes" in e[2]["data"].tags:
         lanes = e[2]["data"].tags["lanes"]
-    value = 0; # give the road a value depending on its type
+    value = 0;  # give the road a value depending on its type
     values = {'motorway': 20,
               'motorway_link': 19,
               'trunk': 15,
@@ -73,20 +73,21 @@ for e in G.edges(data=True):
               'tertiary': 6,
               'tertiary_link': 5,
               'living_street': 0.5,
-              'pedestrian': 0, # never use
+              'pedestrian': 0,  # never use
               'residential': 3,
               'unclassified': 1,
               'service': 1,
               'track': 0.2,
-              'bus_guideway': 0, # never use
-              'raceway': 0, # never use
+              'bus_guideway': 0,  # never use
+              'raceway': 0,  # never use
               'road': 0.5}
     if "highway" in e[2]["data"].tags:
         if e[2]["data"].tags["highway"] in values:
             value = values[e[2]["data"].tags["highway"]]
             usedvalues[e[2]["data"].tags["highway"]] = True
-    
-    e[2]["data"] = {"dist": db[0], "init_bearing": db[1], "final_bearing": db[1], "oneway": oneway, "value": value, "name": name}
+
+    e[2]["data"] = {"dist": db[0], "init_bearing": db[1], "final_bearing": db[1], "oneway": oneway, "value": value,
+                    "name": name}
 
 # first, remove zero-value edges (they are never used, e.g. train tracks)
 to_remove = []
@@ -102,9 +103,10 @@ while changed:
     changed = False
     for e in list(G.edges(data=True)):
         edges = list(G.edges(e[1], data=True))
-        if len(edges)==1 and not edges[0] == e:
+        if len(edges) == 1 and not edges[0] == e:
             # print(edges[0][2])
             # need to prevent roads coming in to be ignored
+
             collapse = True
             for f in G.edges(data=True):
                 if (f[0] != e[0]) and f[1]==e[1]:
@@ -170,7 +172,7 @@ successors = {}
 for e in G.edges(data=True):
     succ = 0
     for f in G.edges([e[1]]):
-        if (f[1],f[0]) == (e[0],e[1]): # no uturn in intersection
+        if (f[1], f[0]) == (e[0], e[1]):  # no uturn in intersection
             continue
         succ = succ + 1
     if succ not in successors:
@@ -183,7 +185,6 @@ for e in G.edges(data=True):
 # here identify which transitions are left turns, which ones right turns, and which ones go straight.
 for e in G.edges(data=True):
     for f in G.edges([e[1]], data=True):
-
         e2_temp = ""
         f2_temp = ""
         try:
@@ -216,18 +217,18 @@ hazards = ['pedestrian', 'obstacle', 'jam']
 alphas = {'roadblock': 0.002,
           'pedestrian': 0.05,
           'obstacle': 0.02,
-          'jam': 0.1} 
+          'jam': 0.1}
 reactions = {'roadblock': ['uturn'],
-             'pedestrian' : ['brake', 'honk', 'changelane'],
+             'pedestrian': ['brake', 'honk', 'changelane'],
              'obstacle': ['changelane', 'uturn'],
              'jam': ['honk', 'uturn']}
-accident_prob = {('pedestrian', 'brake')      : 0.01,
-                 ('pedestrian', 'honk')       : 0.04,
-                 ('pedestrian', 'changelane') : 0.03,
-                 ('obstacle', 'changelane')   : 0.02,
-                 ('obstacle', 'uturn')        : 0.02,
-                 ('jam', 'honk')              : 0.01,
-                 ('jam', 'uturn')             : 0.02 }
+accident_prob = {('pedestrian', 'brake'): 0.01,
+                 ('pedestrian', 'honk'): 0.04,
+                 ('pedestrian', 'changelane'): 0.03,
+                 ('obstacle', 'changelane'): 0.02,
+                 ('obstacle', 'uturn'): 0.02,
+                 ('jam', 'honk'): 0.01,
+                 ('jam', 'uturn'): 0.02}
 
 # all possible reactions
 reacts = set([])
@@ -242,16 +243,16 @@ def powerset(S):
         yield []
     else:
         for s in powerset(S[1:]):
-            yield [S[0]]+s
+            yield [S[0]] + s
             yield s
 
 
 # all possible combinations of hazards
 haz = []
-for i1 in range(0,len(hazards)):
+for i1 in range(0, len(hazards)):
     haz.append([hazards[i1]])
-    for i2 in range(i1+1, len(hazards)):
-        haz.append([hazards[i1],hazards[i2]])
+    for i2 in range(i1 + 1, len(hazards)):
+        haz.append([hazards[i1], hazards[i2]])
 haz.append([])
 
 #########################################################################
@@ -260,7 +261,7 @@ haz.append([])
 
 # one field per edge
 N = len(G.edges())
-M = 3*(len(haz)-1) - 2*len(hazards)
+M = 3 * (len(haz) - 1) - 2 * len(hazards)
 
 # build a dictionary of edges and the associated ids
 # do the same in reverse as well
@@ -299,7 +300,7 @@ smg.write("player p1\n")
 first = True
 for e in G.edges():
     i = edgeid[e]
-    if(not first):
+    if (not first):
         smg.write(",\n")
     first = False
     smg.write("\t")
@@ -311,16 +312,16 @@ for e in G.edges():
     first_ = True
     onlyuturn = True
     for f in G.edges([e[1]]):
-        if (f[1],f[0]) == (e[0],e[1]): # no uturn in intersection
+        if (f[1], f[0]) == (e[0], e[1]):  # no uturn in intersection
             continue
         onlyuturn = False
-        if(not first_):
+        if (not first_):
             smg.write(", ")
         first_ = False
         smg.write("[move_%i_%i]" % (j, i))
         j = j + 1
     # alternatively, termination
-    if onlyuturn or len(G.edges([e[1]]))==0:
+    if onlyuturn or len(G.edges([e[1]])) == 0:
         smg.write("[term_%i]" % (i))
 smg.write("\nendplayer\n\n")
 
@@ -328,7 +329,7 @@ smg.write("player p2\n")
 first = True
 for e in G.edges():
     i = edgeid[e]
-    if(not first):
+    if (not first):
         smg.write(",\n")
     first = False
     smg.write("\t")
@@ -339,11 +340,10 @@ for e in G.edges():
 smg.write(",\n\t[term]")
 smg.write("\nendplayer\n\n")
 
-
 # positions in topology
 smg.write("const int POS_init = %i;\n" % (init))
 smg.write("const int POS_goal = %i;\n" % (N))
-smg.write("const int POS_term = %i;\n" % (N+1))
+smg.write("const int POS_term = %i;\n" % (N + 1))
 for e in G.edges(data=True):
     try:
         e2_temp = e[2]['data']
@@ -365,17 +365,16 @@ smg.write("\n")
 # the topology
 for e in G.edges(data=True):
 
-
     ie = edgeid[(e[0], e[1])]
-    if len(G.edges([e[1]]))==0:
-        if ie==goal:
+    if len(G.edges([e[1]])) == 0:
+        if ie == goal:
             smg.write("const int DEST_%i = POS_goal;\n" % (ie))
         else:
             smg.write("const int DEST_%i = POS_term;\n" % (ie))
     else:
         j = 0
         onlyone = False
-        if len(G.edges([e[1]]))==1:
+        if len(G.edges([e[1]])) == 1:
             onlyone = True
         for f in G.edges([e[1]], data=True):
             try:
@@ -417,27 +416,29 @@ for e in G.edges(data=True):
             j = j + 1
 smg.write("\n")
 
+
 # returns a distribution of hazard probabilities given the length of a road
 def distr(length):
     # how many hazard combinations are there?
-    dist = {} # nothing in distribution yet
+    dist = {}  # nothing in distribution yet
     cumulative = 0.0
     empty_i = 0
     # fill distribution - one entry for each hazard combination
-    for i in range(0,len(haz)):
+    for i in range(0, len(haz)):
         hs = haz[i]
-        if hs==[]:
+        if hs == []:
             empty_i = i
         else:
             Alpha = 1
             for h in hs:
-                Alpha = Alpha*alphas[h]
-            dist[i] = math.tanh(Alpha*length)/len(haz)
+                Alpha = Alpha * alphas[h]
+            dist[i] = math.tanh(Alpha * length) / len(haz)
             cumulative = cumulative + dist[i]
     # probability of nothing happening
     dist[empty_i] = 1 - cumulative
     # return distribution
     return dist
+
 
 # write hazard probabilities for each edge
 for e in G.edges(data=True):
@@ -447,38 +448,46 @@ for e in G.edges(data=True):
     except KeyError as error:
         e2_temp = e[2]['attr_dict']
 
-    ie = edgeid[(e[0],e[1])]
+    # ie = edgeid[(e[0],e[1])]
+    # d = distr(e2_temp["data"]["dist"])
+    # for j in range(0, len(haz)):
+    #     smg.write("const double DISTR_%i_%i = %f;\n" % (j, ie, d[j]))
+    ie = edgeid[(e[0], e[1])]
     d = distr(e2_temp["data"]["dist"])
+    d2 = []
     for j in range(0, len(haz)):
-        smg.write("const double DISTR_%i_%i = %f;\n" % (j, ie, d[j]))
+        d2.append(round(d[j], 6))
+    d2[-1] = 1 - sum(d2[:-1])
+    for j in range(0, len(haz)):
+        smg.write("const double DISTR_%i_%i = %f;\n" % (j, ie, d2[j]))
 smg.write("\n")
 
 for e in G.edges(data=True):
-    ie = edgeid[(e[0],e[1])]
-    if (e[1],e[0]) in edgeid or lanes[ie]>1: # changelane possible if not single-lane oneway
-        smg.write("const int CHANGELANE_0_%i = -1;\n" % (ie)) # accident first option
-        smg.write("const int CHANGELANE_1_%i = -2;\n" % (ie)) # changing is second option
-    else: # changelane illegal - go to violation state in any case
+    ie = edgeid[(e[0], e[1])]
+    if (e[1], e[0]) in edgeid or lanes[ie] > 1:  # changelane possible if not single-lane oneway
+        smg.write("const int CHANGELANE_0_%i = -1;\n" % (ie))  # accident first option
+        smg.write("const int CHANGELANE_1_%i = -2;\n" % (ie))  # changing is second option
+    else:  # changelane illegal - go to violation state in any case
         smg.write("const int CHANGELANE_0_%i = -3;\n" % (ie))
         smg.write("const int CHANGELANE_1_%i = -3;\n" % (ie))
 
 # write uturn reactions for each edge
 for e in G.edges(data=True):
-    ie = edgeid[(e[0],e[1])]
-    if (e[1],e[0]) in edgeid: # uturn possible if not one-way (this also means highways)
-        revedgeid = edgeid[(e[1],e[0])]
-        smg.write("const int UTURN_0_%i = -1;\n" % (ie)) # accident first option
-        smg.write("const int UTURN_1_%i = -2;\n" % (ie)) # turning is second option
-        smg.write("const int UTURNPLAYER_%i = 1;\n" % (ie)) # if in -2, need player 1
-        smg.write("const int REVEDGE_%i = %i;\n" % (ie, revedgeid)) # reverse edge exists
-    else: # uturn illegal - go to violation state in any case
+    ie = edgeid[(e[0], e[1])]
+    if (e[1], e[0]) in edgeid:  # uturn possible if not one-way (this also means highways)
+        revedgeid = edgeid[(e[1], e[0])]
+        smg.write("const int UTURN_0_%i = -1;\n" % (ie))  # accident first option
+        smg.write("const int UTURN_1_%i = -2;\n" % (ie))  # turning is second option
+        smg.write("const int UTURNPLAYER_%i = 1;\n" % (ie))  # if in -2, need player 1
+        smg.write("const int REVEDGE_%i = %i;\n" % (ie, revedgeid))  # reverse edge exists
+    else:  # uturn illegal - go to violation state in any case
         smg.write("const int UTURN_0_%i = -3;\n" % (ie))
         smg.write("const int UTURN_1_%i = -3;\n" % (ie))
-        smg.write("const int UTURNPLAYER_%i = 2;\n" % (ie)) # if in -3, need player 2
-        smg.write("const int REVEDGE_%i = %i;\n" % (ie, ie)) # reverse edge doesn't exist but is irrelevant
+        smg.write("const int UTURNPLAYER_%i = 2;\n" % (ie))  # if in -3, need player 2
+        smg.write("const int REVEDGE_%i = %i;\n" % (ie, ie))  # reverse edge doesn't exist but is irrelevant
 
-smg.write("\nglobal p : [1..2] init 2;\n") # players
-smg.write("global car_position : [0..%i] init POS_init;\n" % (N+2))
+smg.write("\nglobal p : [1..2] init 2;\n")  # players
+smg.write("global car_position : [0..%i] init POS_init;\n" % (N + 2))
 # special states:
 # -1: accident (terminal)
 # -2: sink - goto next edge
@@ -488,88 +497,116 @@ smg.write("global car_position : [0..%i] init POS_init;\n" % (N+2))
 # -11: game terminated
 smg.write("global s : [-11..%i] init 0;\n" % (M))
 
+
 def subhazard(from_s, to_s, subhaz, k):
-    if len(subhaz)==1:
+    if len(subhaz) == 1:
         carreact(from_s, subhaz[0], k)
     else:
         for i in range(0, len(subhaz)):
-            smg.write("\t[%s_%i] p=2 & s=%i & car_position=POS_%i-> (p'=1) & (s'=%i);\n" % (subhaz[i], k, from_s, k, to_s[i]))
+            smg.write(
+                "\t[%s_%i] p=2 & s=%i & car_position=POS_%i-> (p'=1) & (s'=%i);\n" % (subhaz[i], k, from_s, k, to_s[i]))
+
 
 def carreact(from_s, hazz, k):
     for i in range(0, len(reactions[hazz])):
-        if (reactions[hazz][i]=='brake'): # brake action is special (need to insert state to let time pass)
-            smg.write("\t[brake_%i] p=1 & s=%i & car_position=POS_%i -> %f : (p'=2) & (s'=-1) + %f : (p'=1) & (s'=-2);\n" % (k, from_s, k, accident_prob[(hazz,'brake')], 1.0-accident_prob[(hazz,'brake')])) 
-        elif(reactions[hazz][i]=='uturn'): # uturn action is special
-            smg.write("\t[uturn_%i] p=1 & s=%i & car_position=POS_%i -> %f : (p'=2) & (s'=UTURN_0_%i) + %f : (p'=UTURNPLAYER_%i) & (s'=UTURN_1_%i) & (car_position'=REVEDGE_%i);\n" % (k, from_s, k, accident_prob[(hazz,'uturn')], k, 1.0-accident_prob[(hazz,'uturn')], k, k, k))
-        elif(reactions[hazz][i]=='changelane'): # changelane action is special
-            smg.write("\t[changelane_%i] p=1 & s=%i & car_position=POS_%i -> %f : (p'=2) & (s'=CHANGELANE_0_%i) + %f : (p'=1) & (s'=CHANGELANE_1_%i);\n" % (k, from_s, k, accident_prob[(hazz,'changelane')], k, 1.0-accident_prob[(hazz,'changelane')], k)) 
-        else: # standard actions
-            smg.write("\t[%s_%i] p=1 & s=%i & car_position=POS_%i -> %f : (p'=2) & (s'=-1) + %f : (p'=1) & (s'=-2);\n" % (reactions[hazz][i], k, from_s, k, accident_prob[(hazz,reactions[hazz][i])], 1.0-accident_prob[(hazz,reactions[hazz][i])])) 
+        if (reactions[hazz][i] == 'brake'):  # brake action is special (need to insert state to let time pass)
+            smg.write(
+                "\t[brake_%i] p=1 & s=%i & car_position=POS_%i -> %f : (p'=2) & (s'=-1) + %f : (p'=1) & (s'=-2);\n" % (
+                k, from_s, k, accident_prob[(hazz, 'brake')], 1.0 - accident_prob[(hazz, 'brake')]))
+        elif (reactions[hazz][i] == 'uturn'):  # uturn action is special
+            smg.write(
+                "\t[uturn_%i] p=1 & s=%i & car_position=POS_%i -> %f : (p'=2) & (s'=UTURN_0_%i) + %f : (p'=UTURNPLAYER_%i) & (s'=UTURN_1_%i) & (car_position'=REVEDGE_%i);\n" % (
+                k, from_s, k, accident_prob[(hazz, 'uturn')], k, 1.0 - accident_prob[(hazz, 'uturn')], k, k, k))
+        elif (reactions[hazz][i] == 'changelane'):  # changelane action is special
+            smg.write(
+                "\t[changelane_%i] p=1 & s=%i & car_position=POS_%i -> %f : (p'=2) & (s'=CHANGELANE_0_%i) + %f : (p'=1) & (s'=CHANGELANE_1_%i);\n" % (
+                k, from_s, k, accident_prob[(hazz, 'changelane')], k, 1.0 - accident_prob[(hazz, 'changelane')], k))
+        else:  # standard actions
+            smg.write(
+                "\t[%s_%i] p=1 & s=%i & car_position=POS_%i -> %f : (p'=2) & (s'=-1) + %f : (p'=1) & (s'=-2);\n" % (
+                reactions[hazz][i], k, from_s, k, accident_prob[(hazz, reactions[hazz][i])],
+                1.0 - accident_prob[(hazz, reactions[hazz][i])]))
+
+        # the base cases - one for each number of successors (taking no uturn at intersection into account)
 
 
-# the base cases - one for each number of successors (taking no uturn at intersection into account)
 for i, succs in successors.items():
     # k is the first edge with i successors
-    k = edgeid[(succs[0][0],succs[0][1])]
+    k = edgeid[(succs[0][0], succs[0][1])]
     # the corresponding distribution
     smg.write("\n\nmodule field_%i\n\n" % (k))
-    smg.write("\t[hazard_%i] p=2 & s=0 & car_position=POS_%i -> DISTR_0_%i+DISTR_1_%i+DISTR_2_%i+DISTR_5_%i : (s'=-6) + DISTR_3_%i+DISTR_4_%i+DISTR_6_%i : (s'=-7);\n" % (k, k, k, k, k, k, k, k, k))
+    smg.write(
+        "\t[hazard_%i] p=2 & s=0 & car_position=POS_%i -> DISTR_0_%i+DISTR_1_%i+DISTR_2_%i+DISTR_5_%i : (s'=-6) + DISTR_3_%i+DISTR_4_%i+DISTR_6_%i : (s'=-7);\n" % (
+        k, k, k, k, k, k, k, k, k))
 
     # jam or pedestrian
-    smg.write("\t[hazard_%i] p=2 & s=-6 & car_position=POS_%i -> (DISTR_2_%i+DISTR_5_%i)/(DISTR_0_%i+DISTR_1_%i+DISTR_2_%i+DISTR_5_%i) : (s'=-8) + (DISTR_0_%i+DISTR_1_%i)/(DISTR_0_%i+DISTR_1_%i+DISTR_2_%i+DISTR_5_%i) : (s'=-9);\n" % (k, k, k, k, k, k, k, k, k, k, k, k, k, k))
+    smg.write(
+        "\t[hazard_%i] p=2 & s=-6 & car_position=POS_%i -> (DISTR_2_%i+DISTR_5_%i)/(DISTR_0_%i+DISTR_1_%i+DISTR_2_%i+DISTR_5_%i) : (s'=-8) + (DISTR_0_%i+DISTR_1_%i)/(DISTR_0_%i+DISTR_1_%i+DISTR_2_%i+DISTR_5_%i) : (s'=-9);\n" % (
+        k, k, k, k, k, k, k, k, k, k, k, k, k, k))
     # obstacle or nothing
-    smg.write("\t[hazard_%i] p=2 & s=-7 & car_position=POS_%i -> (DISTR_3_%i+DISTR_4_%i)/(DISTR_3_%i+DISTR_4_%i+DISTR_6_%i) : (s'=-10) + (DISTR_6_%i)/(DISTR_3_%i+DISTR_4_%i+DISTR_6_%i) : (s'=-2) & (p'=1);\n" % (k, k, k, k, k, k, k, k, k, k, k))
+    smg.write(
+        "\t[hazard_%i] p=2 & s=-7 & car_position=POS_%i -> (DISTR_3_%i+DISTR_4_%i)/(DISTR_3_%i+DISTR_4_%i+DISTR_6_%i) : (s'=-10) + (DISTR_6_%i)/(DISTR_3_%i+DISTR_4_%i+DISTR_6_%i) : (s'=-2) & (p'=1);\n" % (
+        k, k, k, k, k, k, k, k, k, k, k))
 
     # jam&pedestrian or jam only
     pj = 0
-    if ['pedestrian','jam'] in haz:
-        pj = haz.index(['pedestrian','jam'])
+    if ['pedestrian', 'jam'] in haz:
+        pj = haz.index(['pedestrian', 'jam'])
     else:
-        pj = haz.index(['jam','pedestrian'])
+        pj = haz.index(['jam', 'pedestrian'])
     j = haz.index(['jam'])
-    smg.write("\t[hazard_%i] p=2 & s=-8 & car_position=POS_%i -> DISTR_2_%i/(DISTR_2_%i+DISTR_5_%i) : (s'=%i) + DISTR_5_%i/(DISTR_2_%i+DISTR_5_%i) : (s'=%i) & (p'=1);\n" % (k, k, k, k, k, pj+1, k, k, k, j+1))
+    smg.write(
+        "\t[hazard_%i] p=2 & s=-8 & car_position=POS_%i -> DISTR_2_%i/(DISTR_2_%i+DISTR_5_%i) : (s'=%i) + DISTR_5_%i/(DISTR_2_%i+DISTR_5_%i) : (s'=%i) & (p'=1);\n" % (
+        k, k, k, k, k, pj + 1, k, k, k, j + 1))
 
     # pedestrian&obstacle or pedestrian only
     po = 0
-    if ['pedestrian','obstacle'] in haz:
-        po = haz.index(['pedestrian','obstacle'])
+    if ['pedestrian', 'obstacle'] in haz:
+        po = haz.index(['pedestrian', 'obstacle'])
     else:
-        po = haz.index(['obstacle','pedestrian'])
+        po = haz.index(['obstacle', 'pedestrian'])
     p = haz.index(['pedestrian'])
-    smg.write("\t[hazard_%i] p=2 & s=-9 & car_position=POS_%i -> DISTR_1_%i/(DISTR_0_%i+DISTR_1_%i) : (s'=%i) + DISTR_0_%i/(DISTR_0_%i+DISTR_1_%i) : (s'=%i) & (p'=1);\n" % (k, k, k, k, k, po+1, k, k, k, p+1))
+    smg.write(
+        "\t[hazard_%i] p=2 & s=-9 & car_position=POS_%i -> DISTR_1_%i/(DISTR_0_%i+DISTR_1_%i) : (s'=%i) + DISTR_0_%i/(DISTR_0_%i+DISTR_1_%i) : (s'=%i) & (p'=1);\n" % (
+        k, k, k, k, k, po + 1, k, k, k, p + 1))
 
     # obstacle&jam or obstacle only
     oj = 0
-    if ['jam','obstacle'] in haz:
-        oj = haz.index(['jam','obstacle'])
+    if ['jam', 'obstacle'] in haz:
+        oj = haz.index(['jam', 'obstacle'])
     else:
-        oj = haz.index(['obstacle','jam'])
+        oj = haz.index(['obstacle', 'jam'])
     o = haz.index(['obstacle'])
-    smg.write("\t[hazard_%i] p=2 & s=-10 & car_position=POS_%i -> DISTR_4_%i/(DISTR_3_%i+DISTR_4_%i) : (s'=%i) + DISTR_3_%i/(DISTR_3_%i+DISTR_4_%i) : (s'=%i) & (p'=1);\n" % (k, k, k, k, k, oj+1, k, k, k, o+1))
+    smg.write(
+        "\t[hazard_%i] p=2 & s=-10 & car_position=POS_%i -> DISTR_4_%i/(DISTR_3_%i+DISTR_4_%i) : (s'=%i) + DISTR_3_%i/(DISTR_3_%i+DISTR_4_%i) : (s'=%i) & (p'=1);\n" % (
+        k, k, k, k, k, oj + 1, k, k, k, o + 1))
 
     # instantiate hazard and pick reaction - bad guy followed by good guy
-    for j in range(0, len(haz)-1):
+    for j in range(0, len(haz) - 1):
         if len(haz[j]) == 1:
-            subhazard(j+1, [], haz[j], k)
+            subhazard(j + 1, [], haz[j], k)
         if len(haz[j]) == 2:
-            subhazard(j+1, [haz.index([haz[j][0]])+1, haz.index([haz[j][1]])+1], haz[j], k)
+            subhazard(j + 1, [haz.index([haz[j][0]]) + 1, haz.index([haz[j][1]]) + 1], haz[j], k)
 
     # pick destination - good guy
-    for j in range(0,i):
-        smg.write("\t[move_%i_%i] p=1 & s=%i & car_position=POS_%i-> (car_position'=DEST_%i_%i) & (s'=0) & (p'=2);\n" % (j, k, -2, k, j, k))
+    for j in range(0, i):
+        smg.write(
+            "\t[move_%i_%i] p=1 & s=%i & car_position=POS_%i-> (car_position'=DEST_%i_%i) & (s'=0) & (p'=2);\n" % (
+            j, k, -2, k, j, k))
 
     if i == 0:
-        smg.write("\t[term_%i] p=1 & s=%i & car_position=POS_%i -> (car_position'=DEST_%i) & (s'=0) & (p'=2);\n" % (k, -2, k, k))
-    
+        smg.write("\t[term_%i] p=1 & s=%i & car_position=POS_%i -> (car_position'=DEST_%i) & (s'=0) & (p'=2);\n" % (
+        k, -2, k, k))
+
     smg.write("\nendmodule\n\n\n")
 
 # iterate through topology
 for i, succs in successors.items():
     # if just one edge with i successors, then have it covered already
     if len(succs) > 1:
-        l = edgeid[(succs[0][0],succs[0][1])]
-        for e in succs[1:]: # start iterating at seccond edge
-            k = edgeid[(e[0],e[1])]
+        l = edgeid[(succs[0][0], succs[0][1])]
+        for e in succs[1:]:  # start iterating at seccond edge
+            k = edgeid[(e[0], e[1])]
             # module and position
             smg.write("module field_%i = field_%i [POS_%i=POS_%i" % (k, l, l, k))
             # hazard
@@ -580,13 +617,15 @@ for i, succs in successors.items():
             for r in reacts:
                 smg.write(", %s_%i=%s_%i" % (r, l, r, k))
             # steering
-            for j in range(0,i):
+            for j in range(0, i):
                 smg.write(", move_%i_%i=move_%i_%i, DEST_%i_%i = DEST_%i_%i" % (j, l, j, k, j, l, j, k))
             # hazard-set distribution
-            for j in range(0,len(haz)):
+            for j in range(0, len(haz)):
                 smg.write(", DISTR_%i_%i=DISTR_%i_%i" % (j, l, j, k))
             # uturn reactions
-            smg.write(", UTURN_0_%i=UTURN_0_%i, UTURN_1_%i=UTURN_1_%i, REVEDGE_%i=REVEDGE_%i, UTURNPLAYER_%i=UTURNPLAYER_%i" % (l, k, l, k, l, k, l, k))
+            smg.write(
+                ", UTURN_0_%i=UTURN_0_%i, UTURN_1_%i=UTURN_1_%i, REVEDGE_%i=REVEDGE_%i, UTURNPLAYER_%i=UTURNPLAYER_%i" % (
+                l, k, l, k, l, k, l, k))
             # changelane reactions
             smg.write(", CHANGELANE_0_%i=CHANGELANE_0_%i, CHANGELANE_1_%i=CHANGELANE_1_%i" % (l, k, l, k))
             # alternatively, termination
@@ -596,8 +635,8 @@ for i, succs in successors.items():
 
 # terminal states
 smg.write("\nmodule terminals\n")
-smg.write("\t[term] s=-1 -> (car_position'=POS_term) & (p'=2) & (s'=-11);\n") # accident
-smg.write("\t[term] s=-3 -> (car_position'=POS_term) & (p'=2) & (s'=-11);\n") # illegal action
+smg.write("\t[term] s=-1 -> (car_position'=POS_term) & (p'=2) & (s'=-11);\n")  # accident
+smg.write("\t[term] s=-3 -> (car_position'=POS_term) & (p'=2) & (s'=-11);\n")  # illegal action
 smg.write("\t[term] car_position=POS_goal -> (car_position'=POS_term) & (p'=2) & (s'=-11);\n")
 smg.write("\t[term] car_position=POS_term -> (car_position'=POS_term) & (p'=2) & (s'=-11);\n")
 smg.write("endmodule\n\n")
@@ -623,8 +662,8 @@ for e in G.edges(data=True):
     except KeyError as error:
         e2_temp = e[2]['attr_dict']
 
-    ie = edgeid[(e[0],e[1])]
-    smg.write("\tcar_position=%i & s=-2: %f;\n" % (ie, e2_temp["data"]["value"]*e2_temp["data"]["dist"]/1000))
+    ie = edgeid[(e[0], e[1])]
+    smg.write("\tcar_position=%i & s=-2: %f;\n" % (ie, e2_temp["data"]["value"] * e2_temp["data"]["dist"] / 1000))
 smg.write("endrewards\n\n")
 
 #########################################################################
@@ -632,12 +671,14 @@ smg.write("endrewards\n\n")
 #########################################################################
 
 # write the property - a three-objective conjunctive goal
-if(len(sys.argv)>=2):
-    if(int(sys.argv[1])==1): # islip
-        prop.write("<<1>> (R{\"reach_goal\"}>=0.7 [ C ] &  R{\"accidents\"}<=0.3 [ C ] &  R{\"road_quality\"}>=6.0 [ C ])");
-    elif(int(sys.argv[1])==2): # islip
-        prop.write("<<1>> (R{\"reach_goal\"}>=0.7 [ C ] & R{\"accidents\"}<=0.3 [ C ] & R{\"road_quality\"}>=6.0 [ C ])");
-else: # islip is default
+if (len(sys.argv) >= 2):
+    if (int(sys.argv[1]) == 1):  # islip
+        prop.write(
+            "<<1>> (R{\"reach_goal\"}>=0.7 [ C ] &  R{\"accidents\"}<=0.3 [ C ] &  R{\"road_quality\"}>=6.0 [ C ])");
+    elif (int(sys.argv[1]) == 2):  # islip
+        prop.write(
+            "<<1>> (R{\"reach_goal\"}>=0.7 [ C ] & R{\"accidents\"}<=0.3 [ C ] & R{\"road_quality\"}>=6.0 [ C ])");
+else:  # islip is default
     prop.write("<<1>> (R{\"reach_goal\"}>=0.7 [ C ] & R{\"accidents\"}<=0.3 [ C ] & R{\"road_quality\"}>=6.0 [ C ])");
 
 #########################################################################
@@ -646,7 +687,9 @@ else: # islip is default
 
 # write the command to execute
 bash.write("#!/bin/bash\n\n")
-bash.write("../../bin/prism %s{.prism,.props} -prop 1 -multirounding -multimaxciter 500 -baselineaccuracy 200 -increasefactor 1.01 -paretoepsilon 0.001 -logcpareto -gs -exportstrat %s.strat 2>&1 1> %s.log &\n" % (filename, filename, filename))
+bash.write(
+    "../../bin/prism %s{.prism,.props} -prop 1 -multirounding -multimaxciter 500 -baselineaccuracy 200 -increasefactor 1.01 -paretoepsilon 0.001 -logcpareto -gs -exportstrat %s.strat 2>&1 1> %s.log &\n" % (
+    filename, filename, filename))
 
 #########################################################################
 # Wrap up                                                               #
