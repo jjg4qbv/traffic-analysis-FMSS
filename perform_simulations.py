@@ -7,7 +7,7 @@ for i in range(0, num_sim):
            "-simpath",
            "1000",
        #     "stdout"
-           "./sims/sim" + str(200 + i) + ".txt"
+           "./sims/sim" + str(i) + ".txt"
            ]
     
     subprocess.run(cmd)
