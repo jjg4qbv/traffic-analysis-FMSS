@@ -3,7 +3,7 @@
 //
 // This is a machine-generated file
 // Author: Clemens Wiltsche
-// Generated: 10/05/2023
+// Generated: 11/05/2023
 
 
 smg
@@ -115,7 +115,7 @@ player p2
 	[term]
 endplayer
 
-const int POS_init = 46;
+const int POS_init = 8;
 const int POS_goal = 50;
 const int POS_term = 51;
 const int POS_0 = 0;	// name: 
@@ -182,9 +182,8 @@ const int DEST_0_6 = POS_8;	// from 13th Street Northwest to 13th Street Northwe
 const int DEST_1_6 = POS_9;	// from 13th Street Northwest
 const int DEST_0_7 = POS_14;	// from West Main Street
 const int DEST_1_7 = POS_15;	// from West Main Street to West Main Street
-const int DEST_0_8 = POS_goal;
-const int DEST_1_8 = POS_goal;
-const int DEST_2_8 = POS_goal;
+const int DEST_0_8 = POS_0;	// from 13th Street Northwest
+const int DEST_1_8 = POS_1;	// from 13th Street Northwest to 13th Street Northwest
 const int DEST_9 = POS_term;
 const int DEST_0_10 = POS_5;	// from 13th Street Northwest to West Main Street
 const int DEST_1_10 = POS_7;	// from 13th Street Northwest to West Main Street
@@ -248,8 +247,9 @@ const int DEST_0_44 = POS_16;	// from West Main Street to 12th Street Northwest
 const int DEST_1_44 = POS_17;	// from West Main Street to West Main Street
 const int DEST_0_45 = POS_38;
 const int DEST_1_45 = POS_39;
-const int DEST_0_46 = POS_27;	// from West Main Street to 12 1/2 Street Northwest
-const int DEST_1_46 = POS_28;	// from West Main Street to West Main Street
+const int DEST_0_46 = POS_goal;
+const int DEST_1_46 = POS_goal;
+const int DEST_2_46 = POS_goal;
 const int DEST_0_47 = POS_22;	// to 12th Street Northwest
 const int DEST_1_47 = POS_23;	// to 12th Street Northwest
 const int DEST_0_48 = POS_19;	// to 12th Street Northwest
@@ -922,18 +922,18 @@ module field_0
 	[hazard_0] p=2 & s=-8 & car_position=POS_0 -> DISTR_2_0/(DISTR_2_0+DISTR_5_0) : (s'=3) + DISTR_5_0/(DISTR_2_0+DISTR_5_0) : (s'=6) & (p'=1);
 	[hazard_0] p=2 & s=-9 & car_position=POS_0 -> DISTR_1_0/(DISTR_0_0+DISTR_1_0) : (s'=2) + DISTR_0_0/(DISTR_0_0+DISTR_1_0) : (s'=1) & (p'=1);
 	[hazard_0] p=2 & s=-10 & car_position=POS_0 -> DISTR_4_0/(DISTR_3_0+DISTR_4_0) : (s'=5) + DISTR_3_0/(DISTR_3_0+DISTR_4_0) : (s'=4) & (p'=1);
-	[brake_0] p=1 & s=1 & car_position=POS_0 -> 0.010000 : (p'=2) & (s'=-1) + 0.990000 : (p'=1) & (s'=-2);
-	[honk_0] p=1 & s=1 & car_position=POS_0 -> 0.040000 : (p'=2) & (s'=-1) + 0.960000 : (p'=1) & (s'=-2);
-	[changelane_0] p=1 & s=1 & car_position=POS_0 -> 0.030000 : (p'=2) & (s'=CHANGELANE_0_0) + 0.970000 : (p'=1) & (s'=CHANGELANE_1_0);
+	[brake_0] p=1 & s=1 & car_position=POS_0 -> 0.000100 : (p'=2) & (s'=-1) + 0.999900 : (p'=1) & (s'=-2);
+	[honk_0] p=1 & s=1 & car_position=POS_0 -> 0.000100 : (p'=2) & (s'=-1) + 0.999900 : (p'=1) & (s'=-2);
+	[changelane_0] p=1 & s=1 & car_position=POS_0 -> 0.000100 : (p'=2) & (s'=CHANGELANE_0_0) + 0.999900 : (p'=1) & (s'=CHANGELANE_1_0);
 	[pedestrian_0] p=2 & s=2 & car_position=POS_0-> (p'=1) & (s'=1);
 	[obstacle_0] p=2 & s=2 & car_position=POS_0-> (p'=1) & (s'=4);
 	[pedestrian_0] p=2 & s=3 & car_position=POS_0-> (p'=1) & (s'=1);
 	[jam_0] p=2 & s=3 & car_position=POS_0-> (p'=1) & (s'=6);
-	[changelane_0] p=1 & s=4 & car_position=POS_0 -> 0.020000 : (p'=2) & (s'=CHANGELANE_0_0) + 0.980000 : (p'=1) & (s'=CHANGELANE_1_0);
-	[uturn_0] p=1 & s=4 & car_position=POS_0 -> 0.020000 : (p'=2) & (s'=UTURN_0_0) + 0.980000 : (p'=UTURNPLAYER_0) & (s'=UTURN_1_0) & (car_position'=REVEDGE_0);
+	[changelane_0] p=1 & s=4 & car_position=POS_0 -> 0.040000 : (p'=2) & (s'=CHANGELANE_0_0) + 0.960000 : (p'=1) & (s'=CHANGELANE_1_0);
+	[uturn_0] p=1 & s=4 & car_position=POS_0 -> 0.040000 : (p'=2) & (s'=UTURN_0_0) + 0.960000 : (p'=UTURNPLAYER_0) & (s'=UTURN_1_0) & (car_position'=REVEDGE_0);
 	[obstacle_0] p=2 & s=5 & car_position=POS_0-> (p'=1) & (s'=4);
 	[jam_0] p=2 & s=5 & car_position=POS_0-> (p'=1) & (s'=6);
-	[honk_0] p=1 & s=6 & car_position=POS_0 -> 0.010000 : (p'=2) & (s'=-1) + 0.990000 : (p'=1) & (s'=-2);
+	[honk_0] p=1 & s=6 & car_position=POS_0 -> 0.050000 : (p'=2) & (s'=-1) + 0.950000 : (p'=1) & (s'=-2);
 	[uturn_0] p=1 & s=6 & car_position=POS_0 -> 0.020000 : (p'=2) & (s'=UTURN_0_0) + 0.980000 : (p'=UTURNPLAYER_0) & (s'=UTURN_1_0) & (car_position'=REVEDGE_0);
 	[move_0_0] p=1 & s=-2 & car_position=POS_0-> (car_position'=DEST_0_0) & (s'=0) & (p'=2);
 
@@ -950,18 +950,18 @@ module field_1
 	[hazard_1] p=2 & s=-8 & car_position=POS_1 -> DISTR_2_1/(DISTR_2_1+DISTR_5_1) : (s'=3) + DISTR_5_1/(DISTR_2_1+DISTR_5_1) : (s'=6) & (p'=1);
 	[hazard_1] p=2 & s=-9 & car_position=POS_1 -> DISTR_1_1/(DISTR_0_1+DISTR_1_1) : (s'=2) + DISTR_0_1/(DISTR_0_1+DISTR_1_1) : (s'=1) & (p'=1);
 	[hazard_1] p=2 & s=-10 & car_position=POS_1 -> DISTR_4_1/(DISTR_3_1+DISTR_4_1) : (s'=5) + DISTR_3_1/(DISTR_3_1+DISTR_4_1) : (s'=4) & (p'=1);
-	[brake_1] p=1 & s=1 & car_position=POS_1 -> 0.010000 : (p'=2) & (s'=-1) + 0.990000 : (p'=1) & (s'=-2);
-	[honk_1] p=1 & s=1 & car_position=POS_1 -> 0.040000 : (p'=2) & (s'=-1) + 0.960000 : (p'=1) & (s'=-2);
-	[changelane_1] p=1 & s=1 & car_position=POS_1 -> 0.030000 : (p'=2) & (s'=CHANGELANE_0_1) + 0.970000 : (p'=1) & (s'=CHANGELANE_1_1);
+	[brake_1] p=1 & s=1 & car_position=POS_1 -> 0.000100 : (p'=2) & (s'=-1) + 0.999900 : (p'=1) & (s'=-2);
+	[honk_1] p=1 & s=1 & car_position=POS_1 -> 0.000100 : (p'=2) & (s'=-1) + 0.999900 : (p'=1) & (s'=-2);
+	[changelane_1] p=1 & s=1 & car_position=POS_1 -> 0.000100 : (p'=2) & (s'=CHANGELANE_0_1) + 0.999900 : (p'=1) & (s'=CHANGELANE_1_1);
 	[pedestrian_1] p=2 & s=2 & car_position=POS_1-> (p'=1) & (s'=1);
 	[obstacle_1] p=2 & s=2 & car_position=POS_1-> (p'=1) & (s'=4);
 	[pedestrian_1] p=2 & s=3 & car_position=POS_1-> (p'=1) & (s'=1);
 	[jam_1] p=2 & s=3 & car_position=POS_1-> (p'=1) & (s'=6);
-	[changelane_1] p=1 & s=4 & car_position=POS_1 -> 0.020000 : (p'=2) & (s'=CHANGELANE_0_1) + 0.980000 : (p'=1) & (s'=CHANGELANE_1_1);
-	[uturn_1] p=1 & s=4 & car_position=POS_1 -> 0.020000 : (p'=2) & (s'=UTURN_0_1) + 0.980000 : (p'=UTURNPLAYER_1) & (s'=UTURN_1_1) & (car_position'=REVEDGE_1);
+	[changelane_1] p=1 & s=4 & car_position=POS_1 -> 0.040000 : (p'=2) & (s'=CHANGELANE_0_1) + 0.960000 : (p'=1) & (s'=CHANGELANE_1_1);
+	[uturn_1] p=1 & s=4 & car_position=POS_1 -> 0.040000 : (p'=2) & (s'=UTURN_0_1) + 0.960000 : (p'=UTURNPLAYER_1) & (s'=UTURN_1_1) & (car_position'=REVEDGE_1);
 	[obstacle_1] p=2 & s=5 & car_position=POS_1-> (p'=1) & (s'=4);
 	[jam_1] p=2 & s=5 & car_position=POS_1-> (p'=1) & (s'=6);
-	[honk_1] p=1 & s=6 & car_position=POS_1 -> 0.010000 : (p'=2) & (s'=-1) + 0.990000 : (p'=1) & (s'=-2);
+	[honk_1] p=1 & s=6 & car_position=POS_1 -> 0.050000 : (p'=2) & (s'=-1) + 0.950000 : (p'=1) & (s'=-2);
 	[uturn_1] p=1 & s=6 & car_position=POS_1 -> 0.020000 : (p'=2) & (s'=UTURN_0_1) + 0.980000 : (p'=UTURNPLAYER_1) & (s'=UTURN_1_1) & (car_position'=REVEDGE_1);
 	[term_1] p=1 & s=-2 & car_position=POS_1 -> (car_position'=DEST_1) & (s'=0) & (p'=2);
 
@@ -978,18 +978,18 @@ module field_2
 	[hazard_2] p=2 & s=-8 & car_position=POS_2 -> DISTR_2_2/(DISTR_2_2+DISTR_5_2) : (s'=3) + DISTR_5_2/(DISTR_2_2+DISTR_5_2) : (s'=6) & (p'=1);
 	[hazard_2] p=2 & s=-9 & car_position=POS_2 -> DISTR_1_2/(DISTR_0_2+DISTR_1_2) : (s'=2) + DISTR_0_2/(DISTR_0_2+DISTR_1_2) : (s'=1) & (p'=1);
 	[hazard_2] p=2 & s=-10 & car_position=POS_2 -> DISTR_4_2/(DISTR_3_2+DISTR_4_2) : (s'=5) + DISTR_3_2/(DISTR_3_2+DISTR_4_2) : (s'=4) & (p'=1);
-	[brake_2] p=1 & s=1 & car_position=POS_2 -> 0.010000 : (p'=2) & (s'=-1) + 0.990000 : (p'=1) & (s'=-2);
-	[honk_2] p=1 & s=1 & car_position=POS_2 -> 0.040000 : (p'=2) & (s'=-1) + 0.960000 : (p'=1) & (s'=-2);
-	[changelane_2] p=1 & s=1 & car_position=POS_2 -> 0.030000 : (p'=2) & (s'=CHANGELANE_0_2) + 0.970000 : (p'=1) & (s'=CHANGELANE_1_2);
+	[brake_2] p=1 & s=1 & car_position=POS_2 -> 0.000100 : (p'=2) & (s'=-1) + 0.999900 : (p'=1) & (s'=-2);
+	[honk_2] p=1 & s=1 & car_position=POS_2 -> 0.000100 : (p'=2) & (s'=-1) + 0.999900 : (p'=1) & (s'=-2);
+	[changelane_2] p=1 & s=1 & car_position=POS_2 -> 0.000100 : (p'=2) & (s'=CHANGELANE_0_2) + 0.999900 : (p'=1) & (s'=CHANGELANE_1_2);
 	[pedestrian_2] p=2 & s=2 & car_position=POS_2-> (p'=1) & (s'=1);
 	[obstacle_2] p=2 & s=2 & car_position=POS_2-> (p'=1) & (s'=4);
 	[pedestrian_2] p=2 & s=3 & car_position=POS_2-> (p'=1) & (s'=1);
 	[jam_2] p=2 & s=3 & car_position=POS_2-> (p'=1) & (s'=6);
-	[changelane_2] p=1 & s=4 & car_position=POS_2 -> 0.020000 : (p'=2) & (s'=CHANGELANE_0_2) + 0.980000 : (p'=1) & (s'=CHANGELANE_1_2);
-	[uturn_2] p=1 & s=4 & car_position=POS_2 -> 0.020000 : (p'=2) & (s'=UTURN_0_2) + 0.980000 : (p'=UTURNPLAYER_2) & (s'=UTURN_1_2) & (car_position'=REVEDGE_2);
+	[changelane_2] p=1 & s=4 & car_position=POS_2 -> 0.040000 : (p'=2) & (s'=CHANGELANE_0_2) + 0.960000 : (p'=1) & (s'=CHANGELANE_1_2);
+	[uturn_2] p=1 & s=4 & car_position=POS_2 -> 0.040000 : (p'=2) & (s'=UTURN_0_2) + 0.960000 : (p'=UTURNPLAYER_2) & (s'=UTURN_1_2) & (car_position'=REVEDGE_2);
 	[obstacle_2] p=2 & s=5 & car_position=POS_2-> (p'=1) & (s'=4);
 	[jam_2] p=2 & s=5 & car_position=POS_2-> (p'=1) & (s'=6);
-	[honk_2] p=1 & s=6 & car_position=POS_2 -> 0.010000 : (p'=2) & (s'=-1) + 0.990000 : (p'=1) & (s'=-2);
+	[honk_2] p=1 & s=6 & car_position=POS_2 -> 0.050000 : (p'=2) & (s'=-1) + 0.950000 : (p'=1) & (s'=-2);
 	[uturn_2] p=1 & s=6 & car_position=POS_2 -> 0.020000 : (p'=2) & (s'=UTURN_0_2) + 0.980000 : (p'=UTURNPLAYER_2) & (s'=UTURN_1_2) & (car_position'=REVEDGE_2);
 	[move_0_2] p=1 & s=-2 & car_position=POS_2-> (car_position'=DEST_0_2) & (s'=0) & (p'=2);
 	[move_1_2] p=1 & s=-2 & car_position=POS_2-> (car_position'=DEST_1_2) & (s'=0) & (p'=2);
