@@ -3,14 +3,15 @@ from __future__ import division
 import datetime, math, sys
 import copy
 import osm2graph
+import pickle
 
 # default map:
 filename = "uva_map"
 # goal = 46 # Middle Street (right) ... islip
 # init = 124 # Kidlington Road (top left) ... islip
 
-goal = 10  # i have no idea
-init = 20  # no idea
+goal = 10
+init = 20
 
 if (len(sys.argv) >= 2):
     if (int(sys.argv[1]) == 1):
@@ -22,8 +23,8 @@ if (len(sys.argv) >= 2):
         init = 20
     elif(int(sys.argv[1])==2):
         filename = "corner"
-        goal = 33 # road right top ... charlton
-        init = 43 # road left bottom ... charlton
+        goal = 8  # 13
+        init = 46  # west main st
     elif (int(sys.argv[1] == 3)):
         filename = "uva_map"
         goal = 30
@@ -61,7 +62,7 @@ for e in G.edges(data=True):
     lanes = 1
     if "lanes" in e[2]["data"].tags:
         lanes = e[2]["data"].tags["lanes"]
-    value = 0;  # give the road a value depending on its type
+    value = 0  # give the road a value depending on its type
     values = {'motorway': 20,
               'motorway_link': 19,
               'trunk': 15,
@@ -344,7 +345,15 @@ smg.write("\nendplayer\n\n")
 smg.write("const int POS_init = %i;\n" % (init))
 smg.write("const int POS_goal = %i;\n" % (N))
 smg.write("const int POS_term = %i;\n" % (N + 1))
+
+with open(filename + "_edge_map.txt", 'w'):
+    pass
+
+f = open(filename + "_edge_map.txt", 'a')
+f.write("edge_u, edge_v, prism_id\n")
+
 for e in G.edges(data=True):
+    print(e)
     try:
         e2_temp = e[2]['data']
         e2_temp = e[2]
@@ -352,6 +361,9 @@ for e in G.edges(data=True):
         e2_temp = e[2]['attr_dict']
 
     i = edgeid[(e[0],e[1])]
+
+    f.write(",".join([str(e[0]), str(e[1]), str(i)]))
+    f.write("\n")
     name = ''
     if "name" in e2_temp["data"]:
         name = e2_temp["data"]["name"]
@@ -359,7 +371,6 @@ for e in G.edges(data=True):
         smg.write("const int POS_%i = %i;\t// name: %s\n" % (i, i, name))
     else:
         smg.write("const int POS_%i = %i;\n" % (i, i))
-
 smg.write("\n")
 
 # the topology
@@ -694,7 +705,8 @@ bash.write(
 #########################################################################
 # Wrap up                                                               #
 #########################################################################
-
+with open('generate.pickle', 'wb') as handle:
+    pickle.dump(G, handle)
 # close down files - flush
 smg.close()
 prop.close()
