@@ -1,0 +1,14 @@
+action step p car_position s
+- 0 2 46 0
+[hazard_46] 1 2 46 -7
+[hazard_46] 2 1 46 -2
+[move_0_46] 3 2 27 0
+[hazard_27] 4 2 27 -7
+[hazard_27] 5 1 27 -2
+[move_0_27] 6 2 29 0
+[hazard_29] 7 2 29 -7
+[hazard_29] 8 2 29 -10
+[hazard_29] 9 1 29 4
+[uturn_29] 10 2 29 -3
+[term] 11 2 51 -11
+[term] 12 2 51 -11
