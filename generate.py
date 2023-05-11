@@ -20,11 +20,11 @@ if (len(sys.argv) >= 2):
         filename = "scott_stadium"
         goal = 10
         init = 20
-    # elif(int(sys.argv[1])==2):
-    #     filename = "charlton"
-    #     goal = 33 # road right top ... charlton
-    #     init = 43 # road left bottom ... charlton
-    elif (int(sys.argv[1] == 2)):
+    elif(int(sys.argv[1])==2):
+        filename = "corner"
+        goal = 33 # road right top ... charlton
+        init = 43 # road left bottom ... charlton
+    elif (int(sys.argv[1] == 3)):
         filename = "uva_map"
         goal = 30
         init = 50
